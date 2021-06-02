@@ -1,0 +1,14 @@
+com/wps_iot/BuildConfig.java
+ com.wps_iot.BuildConfig
+com/wps_iot/MainActivity.java
+ com.wps_iot.MainActivity
+com/wps_iot/MainApplication.java
+ com.wps_iot.MainApplication
+ com.wps_iot.MainApplication$1
+com/wps_iot/ReactNativeFlipper.java
+ com.wps_iot.ReactNativeFlipper
+ com.wps_iot.ReactNativeFlipper$1
+ com.wps_iot.ReactNativeFlipper$2
+ com.wps_iot.ReactNativeFlipper$2$1
+com/facebook/react/PackageList.java
+ com.facebook.react.PackageList

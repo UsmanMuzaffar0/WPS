@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "385796812987",
+    "project_id": "wpsiot",
+    "storage_bucket": "wpsiot.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385796812987:android:fccb5df361c4327c3e799e",
+        "android_client_info": {
+          "package_name": "com.wps_iot"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "385796812987-uefpgqnfk5mr5agmc8ok6klahdc1ir4b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAY6YHxxBRObZz54Ew8ZTkYizG0GhAlpu8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "385796812987-uefpgqnfk5mr5agmc8ok6klahdc1ir4b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
