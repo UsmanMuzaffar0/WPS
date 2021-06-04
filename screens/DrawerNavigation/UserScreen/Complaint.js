@@ -2,89 +2,174 @@ import React,{useState} from 'react';
 import {Text, View, StyleSheet, SafeAreaView, TextInput, TouchableOpacity, Alert, ImageBackground} from 'react-native'
 import { Header,Button, Left, Right, Body, Icon,Toast, Card} from 'native-base';
 import colors from '../../../config/colors';
+import * as yup from 'yup'
+import { Formik } from 'formik'
 
 function Complaint(props) {
-
-  const [name, setname]= useState('')
-  const [phone_number, setPhone_number]= useState('')
-  const [details, setDetails]= useState('')
-  const [nature, setNature]= useState('')
 
   function Separator() {
     return <View style={styles.separator} />;
   }
 
-const submitComplaint = () =>{
-
-if(name==""){
-  alert('Name field is empty!');
-}else if(phone_number==""){
-  alert('Phone number is required!');
-}else if(nature==""){
-  alert('Nature of Complaint cannot be empty!');
-}else if(details==""){
-  alert('details of the Complaint cannot be empty!')
-}else{
-  Alert.alert(`name ${name}`)
-}
+const submitComplaint = (name, phoneNumber, details, nature) =>{
+  Alert.alert(`Name ${name} phone ${phoneNumber} details ${details} nature ${nature}`);
 }
 
     return (
       <>
         <Header style={{backgroundColor: colors.seagreen}}>
-          <Left style={{flex:1}}>
-            <Button transparent onPress={()=> props.navigation.openDrawer() }> 
-              <Icon name='menu' style={{color: colors.white}} />
+          <Left style={{flex: 1}}>
+            <Button transparent onPress={() => props.navigation.openDrawer()}>
+              <Icon name="menu" style={{color: colors.white}} />
             </Button>
-
           </Left>
-          <Body style={{flex: 1,  justifyContent: 'center', alignItems: 'center'}}>
-            <Text style={{ fontSize:18, color: colors.white}}>Complaints</Text>
+          <Body
+            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <Text style={{fontSize: 18, color: colors.white}}>Complaints</Text>
           </Body>
-          <Right style={{flex:1}}>
-           
-          </Right>
+          <Right style={{flex: 1}}></Right>
         </Header>
-        <ImageBackground 
-                source={require('../../../assets/comSuggest.jpg')}
-                style={{flex:1, width:'100%', height:'100%'}}>
+        <ImageBackground
+          source={require('../../../assets/comSuggest.jpg')}
+          style={{flex: 1, width: '100%', height: '100%'}}>
+          <View style={styles.container}>
+            <Text style={styles.txt}>
+              ------We are here to assist you!------
+            </Text>
+            <Text style={{textAlign: 'center', color: '#ffffff'}}>
+              Please complete the form below for your complaints
+            </Text>
+            <Separator />
+            <Formik
+              initialValues={{
+                name: '',
+                phoneNumber: '',
+                nature: '',
+                details: '',
+              }}
+              onSubmit={values => {
+                submitComplaint(
+                  values.name,
+                  values.phoneNumber,
+                  values.details,
+                  values.nature,
+                );
+              }}
+              validationSchema={yup.object().shape({
+                name: yup.string().required('Name is required field'),
 
-        <View style = {styles.container}>
-          <Text style={styles.txt}>------We are here to assist you!------</Text>
-          <Text style = {{textAlign:"center", color:'#ffffff'}}>Please complete the form below for your complaints</Text>
-        <Separator />
-        <Text style ={{fontWeight: "bold",fontSize:16,color:'#ffffff'}}>Name: </Text>
-        <TextInput style={styles.textinput}
-            placeholderTextColor={colors.seagreen}
-            placeholder="Enter Name"
-            keyboardType="name-phone-pad"
-            onChangeText= {name => setname(name) }/>
-        <Text style ={{fontWeight: "bold",color:'#ffffff',fontSize:16}}>Ph-Number: </Text>
-        <TextInput style={styles.textinput} 
-            placeholderTextColor={colors.seagreen}
-            placeholder="ex: 0308******97"
-            keyboardType= "phone-pad"
-            onChangeText= {phone_number => setPhone_number(phone_number) }/>
-        <Separator />
-        <Text style ={{fontWeight: "bold",color:'#ffffff',fontSize:16}}>The nature of Complaint: </Text>
-        <TextInput style={styles.textinputlarge}
-            placeholderTextColor={colors.seagreen}
-            placeholder="ex: Sensors"
-            onChangeText= {nature => setNature(nature) } />
-        <Text style ={{fontWeight: "bold",fontSize:16,color:'#ffffff'}}>The specific details of Complaint: </Text>
-        <TextInput style={styles.textinputlarge} 
-            placeholderTextColor={colors.seagreen}
-            placeholder="Detail About your complain"
-            onChangeText= {details => setDetails(details) }/>
-        <View style = {{padding: 30, marginTop: 1}}>
-        
-        <TouchableOpacity onPress={submitComplaint} style={styles.button}>
-                <Text style={styles.buttonText}>Submit</Text>
-        </TouchableOpacity>
-        </View>
+                phoneNumber: yup
+                  .string()
+                  .min(11, 'Cell No must contain 11 Characters')
+                  .max(14, 'Cell no should no exceed 14 Characters')
+                  .required('Phone Number is a required field'),
+
+                nature: yup.string().required('Nature is required Field'),
+
+                details: yup.string().required('Details is required Field'),
+              })}>
+              {({
+                values,
+                handleChange,
+                errors,
+                setFieldTouched,
+                touched,
+                isValid,
+                handleSubmit,
+              }) => (
+                <>
+                  <Text
+                    style={{
+                      fontWeight: 'bold',
+                      fontSize: 16,
+                      color: '#ffffff',
+                    }}>
+                    Name:{' '}
+                  </Text>
+                  <TextInput
+                    style={styles.textinput}
+                    value={values.name}
+                    onBlur={() => setFieldTouched('name')}
+                    placeholderTextColor={colors.seagreen}
+                    placeholder="Enter Name"
+                    keyboardType="name-phone-pad"
+                    onChangeText={handleChange('name')}
+                  />
+                  { touched.name && errors.name && 
+                    <Text style={styles.error}>{errors.name}</Text> 
+                    }
+                  <Text
+                    style={{
+                      fontWeight: 'bold',
+                      color: '#ffffff',
+                      fontSize: 16,
+                    }}>
+                    Ph-Number:{' '}
+                  </Text>
+                  <TextInput
+                    style={styles.textinput}
+                    value={values.phoneNature}
+                    placeholderTextColor={colors.seagreen}
+                    placeholder="ex: 0308******97"
+                    keyboardType="phone-pad"
+                    onChangeText={handleChange('phoneNumber')}
+                    onBlur={() => setFieldTouched('phoneNumber')}
+                  />
+                  { touched.phoneNumber && errors.phoneNumber && 
+                    <Text style={styles.error}>{errors.phoneNumber}</Text> 
+                    }
+                  <Separator />
+                  <Text
+                    style={{
+                      fontWeight: 'bold',
+                      color: '#ffffff',
+                      fontSize: 16,
+                    }}>
+                    The nature of Complaint:{' '}
+                  </Text>
+                  <TextInput
+                    style={styles.textinputlarge}
+                    value={values.nature}
+                    placeholderTextColor={colors.seagreen}
+                    placeholder="ex: Sensors"
+                    onChangeText={handleChange('nature')}
+                    onBlur={() => setFieldTouched('nature')}
+                  />
+                  { touched.nature && errors.nature && 
+                    <Text style={styles.error}>{errors.nature}</Text> 
+                    }
+                  <Text
+                    style={{
+                      fontWeight: 'bold',
+                      fontSize: 16,
+                      color: '#ffffff',
+                    }}>
+                    The specific details of Complaint:{' '}
+                  </Text>
+                  <TextInput
+                    style={styles.textinputlarge}
+                    value={values.details}
+                    placeholderTextColor={colors.seagreen}
+                    placeholder="Detail About your complain"
+                    onChangeText={handleChange('details')}
+                    onBlur={() => setFieldTouched('details')}
+                  />
+                  { touched.details && errors.details && 
+                    <Text style={styles.error}>{errors.details}</Text> 
+                    }
+                  <View style={{padding: 30, marginTop: 1}}>
+                    <TouchableOpacity
+                      onPress={handleSubmit}
+                      style={styles.button}>
+                      <Text style={styles.buttonText}>Submit</Text>
+                    </TouchableOpacity>
+                  </View>
+                </>
+              )}
+            </Formik>
           </View>
         </ImageBackground>
-        </>
+      </>
     );
 }
 
@@ -136,7 +221,13 @@ button: {
     marginVertical:5,
     width:300,
     paddingVertical:12,
-}
+    alignSelf:'center'
+},
+error:{
+  fontSize: 12, 
+  color: '#FF0D10',
+  marginBottom:10
+ },
 });
 
 export default Complaint;

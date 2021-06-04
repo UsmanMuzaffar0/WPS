@@ -7,27 +7,17 @@ import {
   TouchableOpacity,
   TextInput,
   ImageBackground,
+  Alert,
 } from 'react-native';
 import { Header,Button, Left, Right, Body, Icon,Toast, Card} from 'native-base';
 import colors from '../../../config/colors';
+import * as yup from 'yup'
+import { Formik } from 'formik'
 
 function Suggestion(props) {
 
-  const [name, setName] = useState('');
-  const [phone_number, setPhone_number] = useState('');
-  const [feedback, setFeedback] = useState('');
-
-  const submitFeedback = () =>{
-
-    if(feedback==""){
-      alert('Description of Feedback cannot be empty!');
-    }else if(name==""){
-      alert('Name field is empty!');
-    }else if(phone_number==""){
-      alert('Phone Number cannot be empty!');
-    }else{
-      
-    }
+  const submitFeedback = (name, phoneNumber, feedback) =>{
+    Alert.alert(`Name ${name} phoneNumber ${phoneNumber} feedback ${feedback}`)
   }
 
     return (
@@ -56,64 +46,111 @@ function Suggestion(props) {
                 anything so we can improve!
               </Text>
 
-              <Text
-                style={{
-                  fontWeight: 'bold',
-                  marginTop: 18,
-                  fontSize: 17,
-                  color: 'white',
-                }}>
-                Describe Feedback: *{' '}
-              </Text>
-              <TextInput
-              value={feedback}
-                style={styles.textinputlarge}
-                placeholder="Enter Feedback"
-                placeholderTextColor={colors.seagreen}
-                onChangeText={feedback => setFeedback(feedback)}
-              />
-              <Text
-                style={{
-                  fontWeight: 'bold',
-                  fontSize: 17,
-                  color: '#ffffff',
-                  marginTop: 18,
-                }}>
-                {' '}
-                Name: *{' '}
-              </Text>
-              <TextInput
-              value={name}
-              placeholder="Enter Name"
-                style={styles.textinput}
-                onChangeText={name => setName(name)}
-                placeholderTextColor={colors.seagreen}
-              />
-              <Text
-                style={{
-                  fontWeight: 'bold',
-                  marginTop: 18,
-                  fontSize: 17,
-                  color: '#ffffff',
-                }}>
-                Ph-Number: *{' '}
-              </Text>
-              <TextInput
-              value={phone_number}
-                style={styles.textinput}
-                placeholder="ex: 0300******97"
-                keyboardType="phone-pad"
-                onChangeText={phone_number => setPhone_number(phone_number)}
-                placeholderTextColor={colors.seagreen}
-              />
+              <Formik
+                initialValues={{
+                  feedback: '',
+                  name: '',
+                  phoneNumber: '',
+                }}
+                onSubmit={values => {
+                  submitFeedback(
+                    values.name,
+                    values.phoneNumber,
+                    values.feedback,
+                  );
+                }}
+                validationSchema={yup.object().shape({
+                  name: yup.string().required('Name is required Field'),
+                  phoneNumber: yup
+                    .string()
+                    .min(11, 'Cell No must contain 11 Characters')
+                    .max(14, 'Cell no should no exceed 14 Characters')
+                    .required('Phone Number is a required field'),
+                  feedback: yup.string().required('Feedback is required Field'),
+                })}>
+                {({
+                  values,
+                  handleChange,
+                  errors,
+                  setFieldTouched,
+                  touched,
+                  isValid,
+                  handleSubmit,
+                }) => (
+                  <>
+                    <Text
+                      style={{
+                        fontWeight: 'bold',
+                        marginTop: 18,
+                        fontSize: 17,
+                        color: 'white',
+                      }}>
+                      Describe Feedback: *{' '}
+                    </Text>
+                    <TextInput
+                      value={values.feedback}
+                      style={styles.textinputlarge}
+                      placeholder="Enter Feedback"
+                      placeholderTextColor={colors.seagreen}
+                      onChangeText={handleChange('feedback')}
+                      onBlur={() => setFieldTouched('feedback')}
+                    />
+                    { touched.feedback && errors.feedback && 
+                    <Text style={styles.error}>{errors.feedback}</Text> 
+                    }
+                    <Text
+                      style={{
+                        fontWeight: 'bold',
+                        fontSize: 17,
+                        color: '#ffffff',
+                        marginTop: 18,
+                      }}>
+                      {' '}
+                      Name: *{' '}
+                    </Text>
+                    <TextInput
+                      value={values.name}
+                      placeholder="Enter Name"
+                      style={styles.textinput}
+                      onChangeText={handleChange('name')}
+                      placeholderTextColor={colors.seagreen}
+                      onBlur={() => setFieldTouched('name')}
+                    />
+                    { touched.name && errors.name && 
+                    <Text style={styles.error}>{errors.name}</Text> 
+                    }
+                    <Text
+                      style={{
+                        fontWeight: 'bold',
+                        marginTop: 18,
+                        fontSize: 17,
+                        color: '#ffffff',
+                      }}>
+                      Ph-Number: *{' '}
+                    </Text>
+                    <TextInput
+                      value={values.phoneNumber}
+                      style={styles.textinput}
+                      placeholder="ex: 0300******97"
+                      keyboardType="phone-pad"
+                      onChangeText={handleChange('phoneNumber')}
+                      placeholderTextColor={colors.seagreen}
+                      onBlur={() => setFieldTouched('phoneNumber')}
+                    />
+                    { touched.phoneNumber && errors.phoneNumber && 
+                    <Text style={styles.error}>{errors.phoneNumber}</Text> 
+                    }
 
-              <View style={{padding: 50}}>
-                <TouchableOpacity
-                  style={styles.button}
-                  onPress={submitFeedback}>
-                  <Text style={styles.buttonText}>Submit FeedBack</Text>
-                </TouchableOpacity>
-              </View>
+                    <View style={{padding: 50}}>
+                      <TouchableOpacity
+                        style={styles.button}
+                        onPress={submitFeedback}>
+                        <Text style={styles.buttonText}>Submit FeedBack</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </>
+                )}
+              </Formik>
             </View>
           </SafeAreaView>
         </ImageBackground>
@@ -157,6 +194,8 @@ const styles = StyleSheet.create({
     opacity:0.9,
     width:300,
     paddingVertical:12,
+    alignSelf:'center'
+    
 },
 buttonText: {
     fontSize:16,
@@ -164,6 +203,11 @@ buttonText: {
     color:'#ffffff',
     textAlign:'center',
 },
+error:{
+  fontSize: 12, 
+  color: '#FF0D10',
+  marginBottom:10
+ },
 });
 
 export default Suggestion;
