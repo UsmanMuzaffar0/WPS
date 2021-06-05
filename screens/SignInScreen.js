@@ -16,18 +16,67 @@ import LinearGradient from 'react-native-linear-gradient';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import auth from '@react-native-firebase/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { StoreContext } from '../store/store';
+import { ip } from '../config/url';
+import { Toast } from 'native-base';
+import colors from '../config/colors';
 
 export default function SignInScreen({navigation}) {
   const [hidePass, setHidePass] = useState(true);
+  const store = useContext(StoreContext)
 
+  const storageData=(key)=>{
+    AsyncStorage.setItem('@user_id',key)
+    store.setId(key)
+    console.log("Login Successfully as", key)
+    }
 
   const login = async (email,password) => {
-      try {
-          await auth().signInWithEmailAndPassword(email,password)
-      }catch(e){
-          console.log("Sign in",e)
-          Alert.alert('The password is invalid or the user does not have a password')
+      // try {
+      //     await auth().signInWithEmailAndPassword(email,password)
+      // }catch(e){
+      //     console.log("Sign in",e)
+      //     Alert.alert('The password is invalid or the user does not have a password')
+      // }
+      fetch(ip+':9090/users',{
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }
+        )
       }
+      
+      )
+        .then((response) => response.json())
+        .then((json) => {
+          if(json.message == "User not found! please try again!"){
+            Alert.alert('Ooops!!!','invalid Credentials');
+          }else{
+            // console.log((json.id))
+            store.setId(json.id)
+            storageData(json.id)
+            Toast.show({
+              text: 'Login Succesfully',
+              type: "success",
+              style:{opacity:0.9},
+              textStyle:{color:colors.white,textAlign:'center'}
+            })
+
+          }
+          
+          
+
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+
   }
 
   const passwordVisibilty = () => {

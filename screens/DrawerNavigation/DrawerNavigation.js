@@ -12,7 +12,7 @@ const Drawer = createDrawerNavigator();
 const DrawerNavigation = () => {
 
   const store = useContext(StoreContext)
-  const adminId = 'TjNItOdbITQ9RLb6gSLiwMxdR7a2'
+  const adminId = 'd623ee33-97c3-4594-bc6f-665b20ed6ab0'
 
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const DrawerNavigation = () => {
         ()=>
         <>
         {
-         store.Id && store.Id.uid == adminId ? <AdminDrawerNav/>:<UserDrawerNav/> 
+         store.Id && store.Id == adminId ? <AdminDrawerNav/>:<UserDrawerNav/> 
         }
         </>
       

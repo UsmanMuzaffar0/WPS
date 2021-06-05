@@ -19,7 +19,7 @@ export default function SplashScreen({navigation}) {
         <Animatable.Image
           animation="flipInY"
           duration={3000}
-          source={require('../assets/logo.png')}
+          source={require('../assets/extra.png')}
           style={styles.logo}
           resizeMode="contain"
         />

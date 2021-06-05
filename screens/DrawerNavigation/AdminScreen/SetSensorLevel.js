@@ -7,6 +7,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import auth from '@react-native-firebase/auth';
 import { Observer } from 'mobx-react-lite';
 import { StoreContext } from '../../../store/store';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
 
 function SetSensorsLevel(props) {
 
@@ -14,11 +16,25 @@ function SetSensorsLevel(props) {
 
 
   const logout = async () =>{
-      try{
-          await auth().signOut();
-      }catch(e){
-          console.log("Logout",e)
+    AsyncStorage.removeItem('@user_id').then(
+      res=>{
+  
+        console.log('User Id Remove Successfully', res)
+        store.setId(null)
+        Toast.show({
+          text: 'Logout Succesfully',
+          type: "success",
+          style:{opacity:0.9},
+          textStyle:{color:colors.white,textAlign:'center'}
+        })
+  
       }
+    ).catch(
+      e=>{
+        console.log('Error While Removig Id from Local Storage'+e)
+      }
+    )
+  
   } 
   console.log("user",store.Id)
 

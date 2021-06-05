@@ -17,7 +17,11 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { StoreContext } from '../store/store';
+import { ip } from '../config/url';
+import { Toast } from 'native-base';
+import colors from '../config/colors';
 
 
 export default function SignUpScreen({navigation}) {
@@ -27,22 +31,75 @@ export default function SignUpScreen({navigation}) {
   const passwordVisibilty = () => {
     setHidePass(!hidePass);
   };
+  const storageData=(key)=>{
+    AsyncStorage.setItem('@user_id',key)
+    store.setId(key)
+    console.log("Login Successfully as", key)
+    }
+    
+  const showPassword=()=>{
+    setHidePassword(!hidePassword)
+  }
+
+  function create_UUID(){
+    var dt = new Date().getTime();
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = (dt + Math.random()*16)%16 | 0;
+        dt = Math.floor(dt/16);
+        return (c=='x' ? r :(r&0x3|0x8)).toString(16);
+    });
+    return uuid;
+}
 
 
-  const register =  (email,password,name,phoneNumber)=>{
-    auth().create
-    auth().createUserWithEmailAndPassword(email,password).then(res=>{
-      console.log('SignUp Response',res.user.uid)
-      // store.setId(res.user.uid)
-      database().ref(res.user.uid).child('Profile').set({
-       name:name,
-       phoneNumber:phoneNumber
+  const register = (email,password,name,phoneNumber)=>{
+    var uuid= create_UUID()
+    storageData(uuid)
+
+    try{
+      fetch(ip+':9090/register-user',{
+        method: 'POST',
+        headers: {
+          'Accept':'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          id: uuid,
+          name: name,
+          email: email,
+          phoneNumber: phoneNumber,
+          password: password
+        })
+      }).then((response)=> response.json())
+      .then((json)=>{
+        Toast.show({
+          text: 'SignUp Succesfully',
+          type: "success",
+          style:{opacity:0.9},
+          textStyle:{color:colors.white,textAlign:'center'}
+        })
+        
       })
-    }).catch(e=>{
+      .catch((error)=> {
+        console.log("api",error)
+      })
+    } catch(error) {
+      console.log("Try catch",error.message)
+    }
 
-      console.log("Sign up",e)
-      Alert.alert(e.Error)
-    })
+    // auth().createUserWithEmailAndPassword(email,password).then(res=>{
+    //   console.log('SignUp Response',res.user.uid)
+    //   // store.setId(res.user.uid)
+    //   database().ref(res.user.uid).child('User').set({
+    //    name:name,
+    //    phoneNumber:phoneNumber,
+    //    email: email
+    //   })
+    // }).catch(e=>{
+
+    //   console.log("Sign up",e)
+    //   Alert.alert(e.Error)
+    // })
        
   
   }

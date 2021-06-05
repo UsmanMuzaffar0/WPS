@@ -10,7 +10,7 @@ export const StoreProvider = (props) => {
   const store = useLocalObservable(() => ({
 
    
-   Id:[],
+   Id:null,
    setId: action((e) => (store.Id = e)),
    
 
