@@ -72,12 +72,13 @@ export default function SignUpScreen({navigation}) {
         })
       }).then((response)=> response.json())
       .then((json)=>{
-        Toast.show({
-          text: 'SignUp Succesfully',
-          type: "success",
-          style:{opacity:0.9},
-          textStyle:{color:colors.white,textAlign:'center'}
-        })
+        console.log("Sign up Succesfully", json)
+        // Toast.show({
+        //   text: 'SignUp Succesfully',
+        //   type: "success",
+        //   style:{opacity:0.9},
+        //   textStyle:{color:colors.white,textAlign:'center'}
+        // })
         
       })
       .catch((error)=> {

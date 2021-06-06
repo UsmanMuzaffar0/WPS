@@ -105,13 +105,7 @@ dist
 .tern-port
 
 
-# Android/IntelliJ
-#
-build/
-.idea
-.gradle
-local.properties
-*.iml
+
 
 # node.js
 #

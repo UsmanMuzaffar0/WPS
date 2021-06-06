@@ -61,12 +61,12 @@ export default function SignInScreen({navigation}) {
             // console.log((json.id))
             store.setId(json.id)
             storageData(json.id)
-            Toast.show({
-              text: 'Login Succesfully',
-              type: "success",
-              style:{opacity:0.9},
-              textStyle:{color:colors.white,textAlign:'center'}
-            })
+            // Toast.show({
+            //   text: 'Login Succesfully',
+            //   type: "success",
+            //   style:{opacity:0.9},
+            //   textStyle:{color:colors.white,textAlign:'center'}
+            // })
 
           }
           

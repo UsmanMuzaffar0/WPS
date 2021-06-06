@@ -21,12 +21,12 @@ function Home(props) {
     
           console.log('User Id Remove Successfully', res)
           store.setId(null)
-          Toast.show({
-            text: 'Logout Succesfully',
-            type: "success",
-            style:{opacity:0.9},
-            textStyle:{color:colors.white,textAlign:'center'}
-          })
+          // Toast.show({
+          //   text: 'Logout Succesfully',
+          //   type: "success",
+          //   style:{opacity:0.9},
+          //   textStyle:{color:colors.white,textAlign:'center'}
+          // })
     
         }
       ).catch(
