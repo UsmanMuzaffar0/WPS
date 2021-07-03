@@ -21,6 +21,7 @@ import { StoreContext } from '../store/store';
 import { ip } from '../config/url';
 import { Toast } from 'native-base';
 import colors from '../config/colors';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 export default function SignInScreen({navigation}) {
   const [hidePass, setHidePass] = useState(true);
@@ -48,11 +49,8 @@ export default function SignInScreen({navigation}) {
         body: JSON.stringify({
           email: email,
           password: password,
-        }
-        )
-      }
-      
-      )
+        }),
+      })
         .then((response) => response.json())
         .then((json) => {
           if(json.message == "User not found! please try again!"){
@@ -60,6 +58,7 @@ export default function SignInScreen({navigation}) {
           }else{
             // console.log((json.id))
             store.setId(json.id)
+            store.setEmail(email)
             storageData(json.id)
             // Toast.show({
             //   text: 'Login Succesfully',
@@ -89,7 +88,7 @@ export default function SignInScreen({navigation}) {
       <Animatable.View animation="fadeInUpBig" style={styles.home}>
         <FontAwesome
           name="home"
-          color="#fff"
+          color= {colors.darkBlue}
           size={30}
           onPress={() => navigation.navigate('SplashScreen')}
         />
@@ -127,9 +126,10 @@ export default function SignInScreen({navigation}) {
             <>
               <Text style={styles.text_footer}>Email</Text>
               <View style={styles.action}>
-                <Feather name="mail" color="#05375a" size={20} />
+                <Feather name="mail" color={colors.grey} size={20} />
                 <TextInput
                   placeholder="Your Email"
+                  placeholderTextColor={colors.grey}
                   style={styles.textInput}
                   value={values.email}
                   onChangeText={handleChange('email')}
@@ -137,7 +137,7 @@ export default function SignInScreen({navigation}) {
                   autoCapitalize="none"
                   keyboardType="email-address"
                 />
-                <Feather name="check-circle" color="green" size={20} />
+                <Feather name="check-circle" color={colors.grey} size={20} />
               </View>
               {
                 touched.email && errors.email && <Text style={styles.error}>{errors.email}</Text>
@@ -146,11 +146,12 @@ export default function SignInScreen({navigation}) {
                 Password
               </Text>
               <View style={styles.action}>
-                <Feather name="lock" color="#05375a" size={20} />
+                <Feather name="lock" color={colors.grey} size={20} />
                 <TextInput
                   value={values.password}
                   onChangeText={handleChange('password')}
                   placeholder="Your Password"
+                  placeholderTextColor={colors.grey}
                   secureTextEntry={hidePass}
                   style={styles.textInput}
                   autoCapitalize="none"
@@ -158,7 +159,7 @@ export default function SignInScreen({navigation}) {
                 />
                 <Feather
                   name={hidePass ? 'eye-off' : 'eye'}
-                  color="grey"
+                  color={colors.grey}
                   size={20}
                   onPress={() => passwordVisibilty()}
                 />
@@ -201,7 +202,7 @@ export default function SignInScreen({navigation}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#009387',
+    backgroundColor: colors.cyan,
   },
   home: {
     alignItems: 'flex-end',
@@ -216,7 +217,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     flex: 3,
-    backgroundColor: '#fff',
+    backgroundColor: colors.darkBlue,
     borderTopRightRadius: 30,
     borderTopLeftRadius: 30,
     paddingHorizontal: 20,
@@ -228,13 +229,13 @@ const styles = StyleSheet.create({
     marginBottom:10
    },
   text_header: {
-    color: '#fff',
-    fontSize: 30,
+    color: colors.darkBlue,
+    fontSize: 35,
     fontWeight: 'bold',
   },
   text_footer: {
     fontSize: 18,
-    color: '#05375a',
+    color: colors.white,
   },
   action: {
     flexDirection: 'row',
@@ -247,7 +248,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: Platform.OS == 'ios' ? 0 : -12,
     paddingLeft: 10,
-    color: '#05375a',
+    color: colors.white,
   },
   button: {
     textAlign: 'center',

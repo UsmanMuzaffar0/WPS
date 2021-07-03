@@ -15,8 +15,6 @@ import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
-import auth from '@react-native-firebase/auth';
-import database from '@react-native-firebase/database';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { StoreContext } from '../store/store';
 import { ip } from '../config/url';
@@ -36,6 +34,16 @@ export default function SignUpScreen({navigation}) {
     store.setId(key)
     console.log("Login Successfully as", key)
     }
+    const storeName=(name)=>{
+      AsyncStorage.setItem('@name',name)
+      store.setName(name)
+      console.log("Name as", name)
+      }
+      const storeEmail=(email)=>{
+        AsyncStorage.setItem('@email',email)
+        store.setEmail(email)
+        console.log("Email as", email)
+        }
     
   const showPassword=()=>{
     setHidePassword(!hidePassword)
@@ -54,7 +62,7 @@ export default function SignUpScreen({navigation}) {
 
   const register = (email,password,name,phoneNumber)=>{
     var uuid= create_UUID()
-    storageData(uuid)
+   
 
     try{
       fetch(ip+':9090/register-user',{
@@ -72,7 +80,18 @@ export default function SignUpScreen({navigation}) {
         })
       }).then((response)=> response.json())
       .then((json)=>{
+        if(json.message == "User Already exist with this email try another!"){
+          Alert.alert('User Already exist with this email try another!');
+        }
+        else{
         console.log("Sign up Succesfully", json)
+        storageData(uuid)
+        storeName(name)
+        storeEmail(email)
+       
+       
+        console.log("Name Email",store.name + '' + store.email)
+        }
         // Toast.show({
         //   text: 'SignUp Succesfully',
         //   type: "success",
@@ -112,7 +131,7 @@ export default function SignUpScreen({navigation}) {
       <Animatable.View animation="fadeInUpBig" style={styles.home}>
         <FontAwesome
           name="home"
-          color="#fff"
+          color={colors.darkBlue}
           size={30}
           onPress={() => navigation.navigate('SplashScreen')}
         />
@@ -158,59 +177,63 @@ export default function SignUpScreen({navigation}) {
         <>
       <Text style={styles.text_footer}>Full Name</Text>
         <View style={styles.action}>
-          <FontAwesome name="user-o" color="#05375a" size={20} />
+          <FontAwesome name="user-o" color={colors.grey} size={20} />
           <TextInput
             value={values.fullName}
             placeholder="Full Name"
+            placeholderTextColor={colors.grey}
             onChangeText={handleChange('fullName')}
             style={styles.textInput}
             autoCapitalize="none"
             onBlur={() => setFieldTouched('fullName')}
           />
-          <Feather name="check-circle" color="green" size={20} />
+          <Feather name="check-circle" color={colors.grey} size={20} />
         </View>
         {touched.fullName && errors.fullName &&
                 <Text style={styles.error}>{errors.fullName}</Text>
             }
          <Text style={styles.text_footer}>Email</Text>
         <View style={styles.action}>
-          <Feather name="mail" color="#05375a" size={20} />
+          <Feather name="mail" color={colors.grey} size={20} />
           <TextInput
             value={values.email}
             placeholder="Your Email"
+            placeholderTextColor={colors.grey}
             onChangeText={handleChange('email')}
             style={styles.textInput}
             autoCapitalize="none"
             onBlur={() => setFieldTouched('email')}
           />
-          <Feather name="check-circle" color="green" size={20} />
+          <Feather name="check-circle" color={colors.grey} size={20} />
         </View>
         {touched.email && errors.email &&
                 <Text style={styles.error}>{errors.email}</Text>
             }
         <Text style={styles.text_footer}>Phone Number</Text>
         <View style={styles.action}>
-          <Feather name="phone" color="#05375a" size={20} />
+          <Feather name="phone" color={colors.grey} size={20} />
           <TextInput
            value={values.phoneNumber}
             placeholder="Your Phone Number"
             onChangeText={handleChange('phoneNumber')}
+            placeholderTextColor={colors.grey}
             style={styles.textInput}
             autoCapitalize="none"
             onBlur={() => setFieldTouched('phoneNumber')}
           />
-          <Feather name="check-circle" color="green" size={20} />
+          <Feather name="check-circle" color={colors.grey} size={20} />
         </View>
         {touched.phoneNumber && errors.phoneNumber &&
                 <Text style={styles.error}>{errors.phoneNumber}</Text>
             }
         <Text style={[styles.text_footer, {marginTop: 10}]}>Password</Text>
         <View style={styles.action}>
-          <Feather name="lock" color="#05375a" size={20} />
+          <Feather name="lock" color={colors.grey} size={20} />
           <TextInput
            value={values.password}
            onChangeText={handleChange('password')}
             placeholder="Your Password"
+            placeholderTextColor={colors.grey}
             secureTextEntry={hidePass}
             style={styles.textInput}
             autoCapitalize="none"
@@ -218,7 +241,7 @@ export default function SignUpScreen({navigation}) {
           />
           <Feather
             name={hidePass ? 'eye-off' : 'eye'}
-            color="grey"
+            color={colors.grey}
             size={20}
             onPress={() => passwordVisibilty()}
           />
@@ -259,7 +282,7 @@ export default function SignUpScreen({navigation}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#009387',
+    backgroundColor: colors.cyan,
   },
   home: {
     alignItems: 'flex-end',
@@ -274,20 +297,20 @@ const styles = StyleSheet.create({
   },
   footer: {
     flex: 7,
-    backgroundColor: '#fff',
+    backgroundColor: colors.darkBlue,
     borderTopRightRadius: 30,
     borderTopLeftRadius: 30,
     paddingHorizontal: 20,
     paddingVertical: 30,
   },
   text_header: {
-    color: '#fff',
+    color: colors.darkBlue,
     fontSize: 30,
     fontWeight: 'bold',
   },
   text_footer: {
     fontSize: 18,
-    color: '#05375a',
+    color: colors.white,
   },
   action: {
     flexDirection: 'row',
@@ -301,7 +324,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: Platform.OS == 'ios' ? 0 : -12,
     paddingLeft: 10,
-    color: '#05375a',
+    color: colors.white,
   },
   button: {
     textAlign: 'center',

@@ -3,6 +3,7 @@ import Routes from './screens/Routes';
 import {StoreProvider} from './store/store'
 import messaging from '@react-native-firebase/messaging';
 import { Alert } from 'react-native';
+import { ip } from './config/url';
 
 
 export default function App({isHeadless}) {
@@ -69,6 +70,32 @@ export default function App({isHeadless}) {
 
         console.log('Notification Form',remoteMessage.notification)
 
+          try {
+            fetch(ip + ':9090/postNotification', {
+              method: 'POST',
+              headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                title: remoteMessage.notification.title,
+                description: remoteMessage.notification.body,
+                
+              }),
+            })
+              .then(responseData => {
+                return responseData.json();
+              })
+              .then(jsonData => {
+                console.log(jsonData);
+              })
+              .done();
+          } catch (error) {
+            console.error(error);
+          }
+        
+
+
        
     
     }
@@ -78,13 +105,33 @@ export default function App({isHeadless}) {
     .getInitialNotification()
     .then(remoteMessage => {
         console.log('Notification caused app to open from quit state:' , remoteMessage);
-        // if( remoteMessage){
-        //   console.log("Noti Data-->",remoteMessage.notification.title)
-        //   setInitialRoute(remoteMessage.notification.title)
-        //   console.log('Initial Route Name',initialRoute)
-        // }
+     
         if(remoteMessage && remoteMessage.notification){
           console.log('Remote Msg',remoteMessage.notification)
+          try {
+            fetch(ip + ':9090/postNotification', {
+              method: 'POST',
+              headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                title: remoteMessage.notification.title,
+                description: remoteMessage.notification.body,
+                
+              }),
+            })
+              .then(responseData => {
+                return responseData.json();
+              })
+              .then(jsonData => {
+                console.log(jsonData);
+              })
+              .done();
+          } catch (error) {
+            console.error(error);
+          }
+        
         }
 
 

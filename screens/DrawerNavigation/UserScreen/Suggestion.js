@@ -7,22 +7,20 @@ import {
   TouchableOpacity,
   TextInput,
   ImageBackground,
+  StatusBar,
   Alert,
 } from 'react-native';
 import { Header,Button, Left, Right, Body, Icon,Toast, Card} from 'native-base';
 import colors from '../../../config/colors';
 import * as yup from 'yup'
 import { Formik } from 'formik'
+import { ip } from '../../../config/url';
 
 function Suggestion(props) {
 
-  const submitFeedback = (name, phoneNumber, feedback) =>{
-    Alert.alert(`Name ${name} phoneNumber ${phoneNumber} feedback ${feedback}`)
-  }
-
     return (
       <>
-        <Header style={{backgroundColor: colors.seagreen}}>
+        <Header style={{backgroundColor: colors.darkBlue}}>
           <Left style={{flex: 1}}>
             <Button transparent onPress={() => props.navigation.openDrawer()}>
               <Icon name="menu" style={{color: colors.white}} />
@@ -34,13 +32,13 @@ function Suggestion(props) {
           </Body>
           <Right style={{flex: 1}}></Right>
         </Header>
-
+        <StatusBar backgroundColor={colors.darkBlue} barStyle="light-content" />
         <ImageBackground
           source={require('../../../assets/comSuggest.jpg')}
           style={{flex: 1, width: '100%', height: '100%'}}>
           <SafeAreaView style={styles.container}>
             <View style={{marginTop: 20}}>
-              <Text style={styles.txt}>Feedback Form</Text>
+              <Text style={[styles.txt,{textAlign:'center'}]}>Feedback Form</Text>
               <Text style={{color: '#ffffff', fontWeight: '300', fontSize: 17}}>
                 We would love to hear your thoughts, concerns or problems with
                 anything so we can improve!
@@ -52,12 +50,34 @@ function Suggestion(props) {
                   name: '',
                   phoneNumber: '',
                 }}
-                onSubmit={values => {
-                  submitFeedback(
-                    values.name,
-                    values.phoneNumber,
-                    values.feedback,
-                  );
+                onSubmit={(values,actions) => {
+                  try {
+                    fetch(ip + ':9090/suggestion', {
+                      method: 'POST',
+                      headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({
+                        name: values.name,
+                        phoneNumber: values.phoneNumber,
+                        feedback: values.feedback,
+                      }),
+                    })
+                      .then(responseData => {
+                        return responseData.json();
+                      })
+                      .then(jsonData => {
+                        console.log(jsonData);
+                      })
+                      .done();
+                    actions.resetForm();
+                    alert(
+                      'Thanks for Feedback..!!'
+                    );
+                  } catch (error) {
+                    console.log(error);
+                  }
                 }}
                 validationSchema={yup.object().shape({
                   name: yup.string().required('Name is required Field'),
@@ -140,11 +160,10 @@ function Suggestion(props) {
                     { touched.phoneNumber && errors.phoneNumber && 
                     <Text style={styles.error}>{errors.phoneNumber}</Text> 
                     }
-
                     <View style={{padding: 50}}>
                       <TouchableOpacity
                         style={styles.button}
-                        onPress={submitFeedback}>
+                        onPress={handleSubmit}>
                         <Text style={styles.buttonText}>Submit FeedBack</Text>
                       </TouchableOpacity>
                     </View>
