@@ -13,17 +13,36 @@ export default function Routes() {
 
     const store = useContext(StoreContext)
 
-  // const [initializing ,setInitializing ]= useState(true)
+const setName = ()=> {
+  AsyncStorage.getItem('@name').then(
+    name=>{
+      console.log('Get User name From Local Storage on App Launch:'+name)
+      store.setName(name)
+      console.log("storeName:", store.name)
+    }
+  ).catch(e=>{
+    console.log('Error :' +e)
+  })
+}
 
-  // const onAuthStateChanged = (user) => {
-  //   store.setId(user)
-  //   console.log("User Routes",store.Id)
-  //   if(initializing) setInitializing(false)
-  // }
+const setEmail = ()=> {
+  AsyncStorage.getItem('@email').then(
+    email=>{
+      console.log('Get User Email From Local Storage on App Launch:'+email)
+      store.setEmail(email)
+      console.log("storeEmail:", store.email)
+    }
+  ).catch(e=>{
+    console.log('Error :' +e)
+  })
+}
 
   useEffect(()=>{
     // const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     // return subscriber;
+
+    setName()
+    setEmail()
     AsyncStorage.getItem('@user_id').then(
       id=>{
         console.log('Get User Id From Local Storage on App Launch:'+id)
@@ -33,6 +52,8 @@ export default function Routes() {
     ).catch(e=>{
       console.log('Error :' +e)
     })
+
+
   },[]);
 
   // if(initializing) return null;

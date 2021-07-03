@@ -1,9 +1,10 @@
 import React,{useState} from 'react';
-import {Text, View, StyleSheet, SafeAreaView, TextInput, TouchableOpacity, Alert, ImageBackground} from 'react-native'
+import {Text, View, StatusBar,StyleSheet, SafeAreaView, TextInput, TouchableOpacity, Alert, ImageBackground} from 'react-native'
 import { Header,Button, Left, Right, Body, Icon,Toast, Card} from 'native-base';
 import colors from '../../../config/colors';
 import * as yup from 'yup'
 import { Formik } from 'formik'
+import { ip } from '../../../config/url';
 
 function Complaint(props) {
 
@@ -11,13 +12,9 @@ function Complaint(props) {
     return <View style={styles.separator} />;
   }
 
-const submitComplaint = (name, phoneNumber, details, nature) =>{
-  Alert.alert(`Name ${name} phone ${phoneNumber} details ${details} nature ${nature}`);
-}
-
     return (
       <>
-        <Header style={{backgroundColor: colors.seagreen}}>
+        <Header style={{backgroundColor: colors.darkBlue}}>
           <Left style={{flex: 1}}>
             <Button transparent onPress={() => props.navigation.openDrawer()}>
               <Icon name="menu" style={{color: colors.white}} />
@@ -29,12 +26,13 @@ const submitComplaint = (name, phoneNumber, details, nature) =>{
           </Body>
           <Right style={{flex: 1}}></Right>
         </Header>
+        <StatusBar backgroundColor={colors.darkBlue} barStyle="light-content" />
         <ImageBackground
           source={require('../../../assets/comSuggest.jpg')}
           style={{flex: 1, width: '100%', height: '100%'}}>
           <View style={styles.container}>
-            <Text style={styles.txt}>
-              ------We are here to assist you!------
+            <Text style={[styles.txt,{textAlign:'center'}]}>
+              We are here to assist you!
             </Text>
             <Text style={{textAlign: 'center', color: '#ffffff'}}>
               Please complete the form below for your complaints
@@ -47,13 +45,36 @@ const submitComplaint = (name, phoneNumber, details, nature) =>{
                 nature: '',
                 details: '',
               }}
-              onSubmit={values => {
-                submitComplaint(
-                  values.name,
-                  values.phoneNumber,
-                  values.details,
-                  values.nature,
-                );
+              onSubmit={(values,actions) => {
+                try {
+                  fetch(ip + ':9090/complaint', {
+                    method: 'POST',
+                    headers: {
+                      Accept: 'application/json',
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                      name: values.name,
+                      phoneNumber: values.phoneNumber,
+                      nature: values.nature,
+                      details: values.details,
+                    }),
+                  })
+                    .then(responseData => {
+                      return responseData.json();
+                    })
+                    .then(jsonData => {
+                      console.log(jsonData);
+                    })
+                    .done();
+                  
+                  actions.resetForm();
+                  alert(
+                    'Thanks for complaint, We will further take action as soon as possible..!!',
+                  );
+                } catch (error) {
+                  console.error(error);
+                }
               }}
               validationSchema={yup.object().shape({
                 name: yup.string().required('Name is required field'),
@@ -91,7 +112,7 @@ const submitComplaint = (name, phoneNumber, details, nature) =>{
                     value={values.name}
                     onBlur={() => setFieldTouched('name')}
                     placeholderTextColor={colors.seagreen}
-                    placeholder="Enter Name"
+                    placeholder= "Enter Name"
                     keyboardType="name-phone-pad"
                     onChangeText={handleChange('name')}
                   />
@@ -108,7 +129,7 @@ const submitComplaint = (name, phoneNumber, details, nature) =>{
                   </Text>
                   <TextInput
                     style={styles.textinput}
-                    value={values.phoneNature}
+                    value={values.phoneNumber}
                     placeholderTextColor={colors.seagreen}
                     placeholder="ex: 0308******97"
                     keyboardType="phone-pad"
